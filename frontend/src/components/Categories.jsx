@@ -76,7 +76,7 @@ const Categories = () => {
 
     return (
         <div className="p-6">
-            <h1 className="text-3xl font-bold mb-6">Categories</h1>
+            <h1 className="text-3xl text-gray-800 font-bold mb-6">Categories</h1>
 
             {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -87,8 +87,8 @@ const Categories = () => {
             <div className="flex flex-col lg:flex-row gap-6">
                 {/* Form Section */}
                 <div className="lg:w-1/3">
-                    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold mb-4">
+                    <form onSubmit={handleSubmit} className="p-6">
+                        <h2 className="text-xl text-gray-800 font-semibold mb-4">
                             {editingId ? 'Edit Category' : 'Add New Category'}
                         </h2>
                         
@@ -101,10 +101,10 @@ const Categories = () => {
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     className="w-full rounded-md border-2 border-gray-400 py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
                                     required
+                                    placeholder="Enter category name..."
                                     disabled={loading}
                                 />
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Stock Unit</label>
                                 <input
@@ -113,17 +113,19 @@ const Categories = () => {
                                     onChange={(e) => setFormData({ ...formData, stockUnit: e.target.value })}
                                     className="w-full rounded-md border-2 border-gray-400 py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
                                     required
+                                    placeholder="Enter stock unit..."
                                     disabled={loading}
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                <textarea
+                                <input
+                                    type="text"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     className="w-full rounded-md border-2 border-gray-400 py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
-                                    rows="3"
+                                    placeholder="Enter description..."
                                     disabled={loading}
                                 />
                             </div>
@@ -132,7 +134,7 @@ const Categories = () => {
                         <div className="mt-6">
                             <button
                                 type="submit"
-                                className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                                className="w-full bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 disabled:opacity-50"
                                 disabled={loading}
                             >
                                 {loading ? 'Saving...' : editingId ? 'Update Category' : 'Add Category'}
@@ -160,25 +162,25 @@ const Categories = () => {
 
                 {/* Table Section */}
                 <div className="lg:w-2/3">
-                    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="">
                         <table className="min-w-full">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-teal-600">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Name
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Stock Unit
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Description
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="">
                                 {categories.map((category) => (
                                     <tr key={category.categoryId}>
                                         <td className="px-6 py-4 whitespace-nowrap">{category.name}</td>

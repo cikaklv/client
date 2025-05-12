@@ -11,6 +11,8 @@ const StockMovements = () => {
     const [success, setSuccess] = useState('');
     const [editingId, setEditingId] = useState(null);
     const location = useLocation();
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     const [formData, setFormData] = useState({
         productId: '',
@@ -132,6 +134,39 @@ const StockMovements = () => {
         }
     };
 
+    const fetchMovements = async () => {
+        try {
+            setLoading(true);
+            const response = await api.get('/stock-movements');
+            setMovements(response.data);
+            setError('');
+        } catch (error) {
+            setError('Failed to fetch stock movements');
+            console.error('Error fetching stock movements:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGenerateReport = async () => {
+        if (!startDate || !endDate) {
+            setError('Please select both start and end dates.');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const response = await api.get(`/stock-movements/report?startDate=${startDate}&endDate=${endDate}`);
+            setMovements(response.data);
+            setError('');
+        } catch (error) {
+            setError('Failed to generate report');
+            console.error('Error generating report:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (loading && movements.length === 0) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
@@ -155,8 +190,8 @@ const StockMovements = () => {
             <div className="flex flex-col lg:flex-row gap-6">
                 {/* Form Section */}
                 <div className="lg:w-1/3">
-                    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold mb-4">
+                    <form onSubmit={handleSubmit} className="p-6 ">
+                        <h2 className="text-xl text-gray-800 font-semibold mb-4">
                             {editingId ? 'Edit Stock Movement' : 'Add New Stock Movement'}
                         </h2>
                         
@@ -188,6 +223,7 @@ const StockMovements = () => {
                                     className="w-full rounded-md border-2 border-gray-400 py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
                                     required
                                     min="1"
+                                    placeholder="Enter quantity"
                                     disabled={isSubmitting}
                                 />
                             </div>
@@ -208,11 +244,12 @@ const StockMovements = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                                <textarea
+                                <input
+                                    type="text"
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                                     className="w-full rounded-md border-2 border-gray-400 py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
-                                    rows="3"
+                                    placeholder="Enter notes"
                                     disabled={isSubmitting}
                                 />
                             </div>
@@ -221,7 +258,7 @@ const StockMovements = () => {
                         <div className="mt-6">
                             <button
                                 type="submit"
-                                className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                                className="w-full bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 disabled:opacity-50"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? 'Saving...' : editingId ? 'Update Movement' : 'Add Movement'}
@@ -250,34 +287,65 @@ const StockMovements = () => {
 
                 {/* Table Section */}
                 <div className="lg:w-2/3">
-                    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="mb-6">
+                        <h2 className="text-xl text-gray-800 font-semibold mb-4">Generate Report</h2>
+                        <div className="flex space-x-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="rounded-md border-2 border-gray-400 py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="rounded-md border-2 border-gray-400 py-2 px-3 focus:border-blue-500 focus:ring-blue-500"
+                                />
+                            </div>
+                            <button
+                                onClick={handleGenerateReport}
+                                className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 disabled:opacity-50"
+                                disabled={loading}
+                            >
+                                Generate Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="">
                         <table className="min-w-full">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-teal-600">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Date
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Product
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Type
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Quantity
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Notes
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         User
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="">
                                 {movements.map((movement) => (
                                     <tr key={movement.movementId}>
                                         <td className="px-6 py-4 whitespace-nowrap">

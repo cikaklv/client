@@ -32,9 +32,9 @@ function App() {
       <div className="min-h-screen bg-gray-100">
         {isAuthenticated && <Navbar onLogout={handleLogout} />}
         <div className="container mx-auto px-4 py-8">
-          <Routes>
+      <Routes>
             {/* Public routes */}
-            <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             
             {/* Protected routes */}
@@ -76,7 +76,7 @@ function App() {
 
             {/* Redirect any unknown routes to dashboard */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
+      </Routes>
         </div>
       </div>
     </BrowserRouter>
